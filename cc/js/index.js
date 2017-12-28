@@ -2,9 +2,9 @@ new Vue({
     el:"#root",
     data:{
         list:[
-            {id:1,title:1111},
-            {id:2,title:2222},
-            {id:3,title:3333},
+            {id:1,title:"aaa"},
+            {id:2,title:"bbb"},
+            {id:3,title:"ccc"},
         ],
         title:"",
         state:false
