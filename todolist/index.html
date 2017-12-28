@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/vue.js"></script>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<div id="root">
+    <div class="box">
+        <div class="title">
+            <span>todolist</span>
+            <input type="text" placeholder="请输入您想要做的事情" v-model="message" @keyup.13="add" v-focus>
+            <div></div>
+        </div>
+        <ul class="type">
+            <li><input type="button" value="未完成" @click="changestatus('0')" :class="{check:status=='0'}"></li>
+            <li><input type="button" value="已完成" @click="changestatus('1')" :class="{check:status=='1'}"></li>
+            <li><input type="button" value="全部" @click="changestatus('all')" :class="{check:status=='all'}"></li>
+        </ul>
+        <ul class="content">
+            <li v-for="item in datas" v-if="item.edit" @dblclick="edit(item)">
+                <div class="opt" @click="changestate(item)" :class="{red:item.state=='1'}" ></div>
+                <span class="cont">{{item.title}}</span>
+                <div class="del" @click="del(item.id)">删除</div>
+            </li>
+            <input type="text" v-else v-model="item.title" @blur="edit(item)" class="edit">
+        </ul>
+        <div v-show="all.length==0">没有数据</div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    Vue.directive("focus",{
+        inserted:function(val1,val2){
+            val1.focus();
+        }
+    })
+    new Vue({
+        el:"#root",
+        data:{
+            all: localStorage.todo?JSON.parse(localStorage.todo):[],
+            message:"",
+            status:"all",
+            state:""
+        },
+        methods:{
+            add:function(){
+                if(!this.message){
+                    alert("请输入信息");
+                    return;
+                }
+                var obj={};
+                obj.title=this.message;
+                obj.id=Math.random()+new Date().getTime();
+                obj.state=0;
+                obj.edit=true;
+                this.all.push(obj);
+                this.message="";
+                localStorage.todo=JSON.stringify(this.all);
+            },
+            del:function(ids){
+                this.all=this.all.filter(ele=>ele.id!=ids);
+                localStorage.todo=JSON.stringify(this.all);
+            },
+            changestatus(val){
+                this.status=val;
+                localStorage.todo=JSON.stringify(this.all);
+            },
+            changestate(objs){
+                if(objs.state==0){
+                    objs.state=1;
+                }else if(objs.state==1){
+                    objs.state=0;
+                }
+                localStorage.todo=JSON.stringify(this.all);
+            },
+            edit(obj){
+                obj.edit = !obj.edit;
+                localStorage.todo = JSON.stringify(this.all);
+            }
+        },
+        computed:{
+            datas(){
+                return this.all.filter((a)=>{
+                    if(this.status=="all"){
+                        return a;
+                    }else if(a.state==this.status){
+                        return a;
+                    }
+                })
+            }
+        }
+    })
+
+</script>
