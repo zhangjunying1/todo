@@ -15,7 +15,7 @@ Vue.component("custom-input",{
 
 Vue.component("custom-list",{
     props:["listData","state"],
-    template:`<ul class="select-list">
+    template:`<ul class="select-list" v-show="status">
         <li v-for="v in listData" @click="change(v.title)">{{v.title}}</li>
     </ul>`,
     data(){
